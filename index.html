@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color:#f6f6f6;
+            color:#FF76CE;
+        }
+
+        html {
+            height:100%
+        }
+
+        .bg_heart {
+            position: relative;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .heart {
+            position: absolute;
+            top: -50%;
+            -webkit-transform: rotate(-45deg);
+            -moz-transform: rotate(-45deg);
+            -m-transform: rotate(-45deg);
+            transform: rotate(-45deg)
+        }
+
+        .heart:before {
+            position: absolute;
+            top: -50%;
+            left: 0;
+            display: block;
+            content: "";
+            width: 100%;
+            height: 100%;
+            background: inherit;
+            border-radius: 100%;
+        }
+
+        .heart:after {
+            position: absolute;
+            top: 0;
+            right: -50%;
+            display: block;
+            content: "";
+            width: 100%;
+            height: 100%;
+            background: inherit;
+            border-radius: 100%;
+        }
+
+        @-webkit-keyframes love {
+        0%{top:110%}
+        }
+        @-moz-keyframes love {
+        0%{top:110%}
+        }
+        @-ms-keyframes love {
+        0%{top:110%}
+        }
+        @keyframes love {
+        0%{top:110%}
+        }
+        
+        .typewrite > .wrap { 
+            color: #FF76CE;
+            font-family: 'Swanky and Moo Moo', cursive;
+            font-size: 60px;
+        }
+        
+        * {
+            color:#FF76CE; text-decoration: none; 
+        }
+
+        h1 {
+            position: relative;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg_heart">
+        <h1>
+            <a class="typewrite" 
+               data-type='[ "mtuan yeu phuong", 
+                          "mtuan thuong phuong nhieu", 
+                          "miss u baby", "🥰" 
+                          ]'>
+            </a>
+        </h1>
+
+    </div>
+</body>
+<script>
+
+    var love = setInterval(function() {
+        var r_num = Math.floor(Math.random() * 40) + 1;
+        var r_size = Math.floor(Math.random() * 65) + 10;
+        var r_left = Math.floor(Math.random() * 100) + 1;
+        var r_bg = Math.floor(Math.random() * 25) + 100;
+        var r_time = Math.floor(Math.random() * 5) + 5;
+
+        var bgHeart = document.querySelector('.bg_heart');
+        var newHeart1 = document.createElement('div');
+        newHeart1.className = 'heart';
+        newHeart1.style.width = r_size + 'px';
+        newHeart1.style.height = r_size + 'px';
+        newHeart1.style.left = r_left + '%';
+        newHeart1.style.background = 'rgba(255,' + (r_bg - 25) + ',' + r_bg + ',1)';
+        newHeart1.style.animation = 'love ' + r_time + 's ease';
+        bgHeart.appendChild(newHeart1);
+
+        var newHeart2 = document.createElement('div');
+        newHeart2.className = 'heart';
+        newHeart2.style.width = (r_size - 10) + 'px';
+        newHeart2.style.height = (r_size - 10) + 'px';
+        newHeart2.style.left = (r_left + r_num) + '%';
+        newHeart2.style.background = 'rgba(255,' + (r_bg - 25) + ',' + (r_bg + 25) + ',1)';
+        newHeart2.style.animation = 'love ' + (r_time + 5) + 's ease';
+        bgHeart.appendChild(newHeart2);
+
+        var hearts = document.querySelectorAll('.heart');
+        hearts.forEach(function(heart) {
+            var top = parseFloat(getComputedStyle(heart).top);
+            var width = parseFloat(getComputedStyle(heart).width);
+            if (top <= -100 || width >= 150) {
+                heart.parentNode.removeChild(heart);
+            }
+        });
+    }, 500);
+
+    var TxtType = function(el, toRotate, period) {
+        this.toRotate = toRotate;
+        this.el = el;
+        this.loopNum = 0;
+        this.period = parseInt(period, 10) || 2000;
+        this.txt = '';
+        this.tick();
+        this.isDeleting = false;
+    };
+
+    TxtType.prototype.tick = function() {
+        var i = this.loopNum % this.toRotate.length;
+        var fullTxt = this.toRotate[i];
+
+        if (this.isDeleting) {
+        this.txt = fullTxt.substring(0, this.txt.length - 1);
+        } else {
+        this.txt = fullTxt.substring(0, this.txt.length + 1);
+        }
+
+        this.el.innerHTML = '<span class="wrap">'+this.txt+'</span>';
+
+        var that = this;
+        var delta = 200 - Math.random() * 100;
+
+        if (this.isDeleting) { delta /= 2; }
+
+        if (!this.isDeleting && this.txt === fullTxt) {
+        delta = this.period;
+        this.isDeleting = true;
+        } else if (this.isDeleting && this.txt === '') {
+        this.isDeleting = false;
+        this.loopNum++;
+        delta = 500;
+        }
+
+        setTimeout(function() {
+        that.tick();
+        }, delta);
+    };
+
+    window.onload = function() {
+        var elements = document.getElementsByClassName('typewrite');
+        for (var i=0; i<elements.length; i++) {
+            var toRotate = elements[i].getAttribute('data-type');
+            var period = elements[i].getAttribute('data-period');
+            if (toRotate) {
+            new TxtType(elements[i], JSON.parse(toRotate), period);
+            }
+        }
+        // INJECT CSS
+        var css = document.createElement("style");
+        css.type = "text/css";
+        document.body.appendChild(css);
+    };
+</script>
+</html>
